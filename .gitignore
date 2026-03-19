@@ -2,3 +2,4 @@
 .venv/*
 logs/
 logs/*
+logs/account.log
