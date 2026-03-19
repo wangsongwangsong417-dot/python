@@ -14,7 +14,7 @@ class ColoredFormatter(logging.Formatter):
         'WARNING': '\033[33m',    # 黄色
         'ERROR': '\033[31m',      # 红色
         'CRITICAL': '\033[35m',   # 紫色
-        'TIME': '\033[90m',       # 灰色（时间）
+        'TIME': '\033[31m',       # 红色
         'FILENAME': '\033[94m',   # 蓝色（文件名）
         'LINENO': '\033[35m',     # 紫色（行号）
         'RESET': '\033[0m'        # 重置颜色
