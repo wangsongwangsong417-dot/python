@@ -1,16 +1,31 @@
-import requests
+import json
 import logging
+import requests
 import http.client
-
 from config.logger_util import setup_logger
 
-logger = setup_logger(log_file="activate.log", level=logging.INFO)
+# 初始化日志器
+logger = setup_logger(log_file="account.log", level=logging.INFO)
+
 try:
+    logger.info("开始请求 API")
+    response = requests.get('http://localhost:3490/v1/account-totals', timeout=10)
+    logger.info("API 请求成功")
+    response.raise_for_status()
+    data = response.json()
+    # 打印格式化的 JSON 响应
+    logger.info(f"API 响应数据: {json.dumps(data, ensure_ascii=False)}")
+    keys = data['keys']
+    clicks = data['clicks']
+    rank_uptime = data['ranks']['rank_uptime']
+    message = "Current keys: {}, current clicks: {}, rank in uptime: {}".format(
+        keys, clicks, rank_uptime
+    )
+    logger.info(message)
     url = 'http://localhost:3490/v1/profiles/activate'
     data = {'profile_id': '1234567890'}
     response = requests.post(url, json=data)
     logger.info(f"API 请求成功: {response.json()}")
-
     url = "https://whatpulse.org/api/v1/users/wangsongwangsong417"
     payload = {}
     headers = {
@@ -19,7 +34,6 @@ try:
     }
     response = requests.request("GET", url, headers=headers, data=payload)
     logger.info(f"API 请求用户信息成功: {response.json()}")
-
     conn = http.client.HTTPSConnection("whatpulse.org")
     payload = ''
     # API 对 is_archived 做 boolean 校验：URL 里用字符串 "false" 常会被拒绝，需用 0/1。
@@ -28,7 +42,7 @@ try:
     data = res.read()
     logger.info("xxx")
     print(data.decode("utf-8"))
-except Exception as e:
+except requests.exceptions.RequestException as e:
     logger.error(f"API 请求失败: {e}")
 except KeyError as e:
     logger.error(f"响应数据格式错误，缺少字段: {e}")
